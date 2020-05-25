@@ -1,7 +1,10 @@
-package melvin.datastructures.bst;
+package melvin.datastructures.binarysearchtree;
+
+import melvin.datastructures.binarynode.BinaryNode;
+import melvin.algos.Mode;
 
 public class BinarySearchTree {
-  Node root;
+  BinaryNode root;
 
   /**
    * inserts a node to the binary search tree
@@ -9,16 +12,15 @@ public class BinarySearchTree {
    * @param n node to be inserted
    * @param m mode - recursion or loop
    */
-  void insert(Node n, Mode m) {
-    if (root == null) {
-      root = n;
-      return;
-    }
+  public boolean insert(BinaryNode n, Mode m) {
     if (m == Mode.RECURSIVE) {
-      insertRecursive(null, root, n);
+      insert(null, root, n);
+    } else if (m == Mode.BYLOOP) {
+      insert(n);
     } else {
-      insertByLoop(n);
+      return false;
     }
+    return true;
   }
 
   /**
@@ -29,7 +31,11 @@ public class BinarySearchTree {
    * @param currentNode current node with which the given node is checked with
    * @param point       is the node to be inserted
    */
-  void insertRecursive(Node parentNode, Node currentNode, Node point) {
+  void insert(BinaryNode parentNode, BinaryNode currentNode, BinaryNode point) {
+    if (root == null) {
+      root = point;
+      return;
+    }
     if (currentNode == null) {
       currentNode = point;
       if (parentNode.value > currentNode.value) {
@@ -40,11 +46,11 @@ public class BinarySearchTree {
       return;
     }
     if (currentNode.value > point.value) {
-      insertRecursive(currentNode, currentNode.left, point);
+      insert(currentNode, currentNode.left, point);
       return;
     }
     if (currentNode.value < point.value) {
-      insertRecursive(currentNode, currentNode.right, point);
+      insert(currentNode, currentNode.right, point);
       return;
     }
   }
@@ -54,9 +60,9 @@ public class BinarySearchTree {
    * 
    * @param n node to be inserted
    */
-  void insertByLoop(Node n) {
-    Node currentNode = root;
-    Node parentNode = null;
+  void insert(BinaryNode n) {
+    BinaryNode currentNode = root;
+    BinaryNode parentNode = null;
     while (true) {
       if (currentNode == null) {
         currentNode = n;
@@ -82,11 +88,11 @@ public class BinarySearchTree {
    * @param m mode of search recursive or loop
    * @return true if the node is found else false
    */
-  boolean search(Node n, Mode m) {
+  public boolean search(BinaryNode n, Mode m) {
     if (m == Mode.RECURSIVE) {
-      return this.searchRecursive(this.root, n);
+      return search(this.root, n);
     }
-    return this.searchByLoop(n);
+    return search(n);
   }
 
   /**
@@ -96,7 +102,7 @@ public class BinarySearchTree {
    * @param n           node to be searched
    * @return true if the node is existing in the sub tree from this node
    */
-  boolean searchRecursive(Node currentNode, Node n) {
+  boolean search(BinaryNode currentNode, BinaryNode n) {
     if (currentNode == null) {
       return false;
     }
@@ -104,10 +110,10 @@ public class BinarySearchTree {
       return true;
     }
     if (currentNode.value > n.value) {
-      return searchRecursive(currentNode.left, n);
+      return search(currentNode.left, n);
     }
     if (currentNode.value < n.value) {
-      return searchRecursive(currentNode.right, n);
+      return search(currentNode.right, n);
     }
     return false;
   }
@@ -118,8 +124,8 @@ public class BinarySearchTree {
    * @param n node to be found
    * @return true if the node is existing in the BST
    */
-  boolean searchByLoop(Node n) {
-    Node currentNode = root;
+  boolean search(BinaryNode n) {
+    BinaryNode currentNode = root;
     while (true) {
       if (currentNode == null) {
         return false;
@@ -136,26 +142,12 @@ public class BinarySearchTree {
     BinarySearchTree bst = new BinarySearchTree();
     BinarySearchTree bstO = new BinarySearchTree();
     for (int i : list) {
-      bst.insert(new Node(i), Mode.RECURSIVE);
-      bstO.insert(new Node(i), Mode.BYLOOP);
+      bst.insert(new BinaryNode(i), Mode.RECURSIVE);
+      bstO.insert(new BinaryNode(i), Mode.BYLOOP);
     }
-    System.out.println("Recursive mode should be true. got " + bst.search(new Node(28), Mode.RECURSIVE));
-    System.out.println("Loop by mode should be true. got " + bst.search(new Node(28), Mode.BYLOOP));
-    System.out.println("Recursive mode should be false. got " + bst.search(new Node(23), Mode.RECURSIVE));
-    System.out.println("Loop by mode should be false. got " + bst.search(new Node(23), Mode.BYLOOP));
-  }
-}
-
-enum Mode {
-  RECURSIVE, BYLOOP
-}
-
-class Node {
-  int value;
-  Node left;
-  Node right;
-
-  Node(int value) {
-    this.value = value;
+    System.out.println("Recursive mode should be true. got " + bst.search(new BinaryNode(28), Mode.RECURSIVE));
+    System.out.println("Loop by mode should be true. got " + bst.search(new BinaryNode(28), Mode.BYLOOP));
+    System.out.println("Recursive mode should be false. got " + bst.search(new BinaryNode(23), Mode.RECURSIVE));
+    System.out.println("Loop by mode should be false. got " + bst.search(new BinaryNode(23), Mode.BYLOOP));
   }
 }
