@@ -90,15 +90,41 @@ public class BinaryTree {
       return true;
     }
 
-    // we will use preorder to find the parent node
+    BinaryNode foundNode = search(parent);
+    if (foundNode == null) {
+      return false;
+    }
+    if (c == Child.LEFT && foundNode.left == null) {
+      foundNode.left = n;
+      return true;
+    }
+    if (c == Child.RIGHT && foundNode.right == null) {
+      foundNode.right = n;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * search whether a given node is present in the BST
+   * 
+   * @param n node to be found
+   * @return the node if found else null
+   */
+  BinaryNode search(BinaryNode n) {
+    if (root == null) {
+      return null;
+    }
+
+    // we will use preorder to find the node
     Stack<BinaryNode> nodesStack = new Stack<>();
     BinaryNode currentNode = root;
     nodesStack.push(currentNode);
     while (true) {
-      BinaryNode stackNode = nodesStack.peek();
-      if (stackNode == null) {
-        return false;
+      if (nodesStack.isEmpty()) {
+        return null;
       }
+      BinaryNode stackNode = nodesStack.peek();
       // checking whether we are on a reverse mode in traversal
       if (stackNode.value != currentNode.value) {
         // if right node is the
@@ -106,6 +132,9 @@ public class BinaryTree {
             || (currentNode.left != null && stackNode.value == currentNode.left.value && stackNode.right == null)) {
           nodesStack.pop();
           nodesStack.pop();
+          if (nodesStack.isEmpty()) {
+            return null;
+          }
           BinaryNode pNode = nodesStack.peek();
           nodesStack.push(currentNode);
           currentNode = pNode;
@@ -119,16 +148,8 @@ public class BinaryTree {
       }
 
       // checking whether the current node is the parent node
-      if (currentNode.value == parent.value) {
-        if (c == Child.LEFT && currentNode.left == null) {
-          currentNode.left = n;
-          return true;
-        }
-        if (c == Child.RIGHT && currentNode.right == null) {
-          currentNode.right = n;
-          return true;
-        }
-        return false;
+      if (currentNode.value == n.value) {
+        return currentNode;
       }
 
       if (currentNode.left != null) {
@@ -136,26 +157,18 @@ public class BinaryTree {
         nodesStack.push(currentNode);
         continue;
       }
+
       if (currentNode.right != null) {
         currentNode = currentNode.right;
         nodesStack.push(currentNode);
         continue;
       }
+
       nodesStack.pop();
       BinaryNode pNode = nodesStack.peek();
       nodesStack.push(currentNode);
       currentNode = pNode;
     }
-  }
-
-  /**
-   * search whether a given node is present in the BST
-   * 
-   * @param n node to be found
-   * @return true if the node is found else false
-   */
-  boolean search(BinaryNode n) {
-    return false;
   }
 
   public static void main(String[] args) {
@@ -166,6 +179,7 @@ public class BinaryTree {
     bt.insert(bt.root.left, new BinaryNode(25), Child.RIGHT, Mode.BYLOOP);
     bt.insert(bt.root.right, new BinaryNode(27), Child.RIGHT, Mode.BYLOOP);
     bt.insert(bt.root.right.right, new BinaryNode(31), Child.RIGHT, Mode.RECURSIVE);
-    System.out.println(bt);
+    BinaryNode bn = bt.search(new BinaryNode(51));
+    System.out.println(bn);
   }
 }
