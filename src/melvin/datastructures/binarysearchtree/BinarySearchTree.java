@@ -1,10 +1,11 @@
 package melvin.datastructures.binarysearchtree;
 
+import melvin.datastructures.binarynode.IBinaryNode;
 import melvin.datastructures.binarynode.BinaryNode;
 import melvin.algos.Mode;
 
 public class BinarySearchTree {
-  BinaryNode root;
+  public IBinaryNode root;
 
   /**
    * inserts a node to the binary search tree
@@ -12,7 +13,7 @@ public class BinarySearchTree {
    * @param n node to be inserted
    * @param m mode - recursion or loop
    */
-  public boolean insert(BinaryNode n, Mode m) {
+  public boolean insert(IBinaryNode n, Mode m) {
     if (m == Mode.RECURSIVE) {
       insert(null, root, n);
     } else if (m == Mode.BYLOOP) {
@@ -31,26 +32,26 @@ public class BinarySearchTree {
    * @param currentNode current node with which the given node is checked with
    * @param point       is the node to be inserted
    */
-  void insert(BinaryNode parentNode, BinaryNode currentNode, BinaryNode point) {
+  void insert(IBinaryNode parentNode, IBinaryNode currentNode, IBinaryNode point) {
     if (root == null) {
       root = point;
       return;
     }
     if (currentNode == null) {
       currentNode = point;
-      if (parentNode.value > currentNode.value) {
-        parentNode.left = currentNode;
-      } else if (parentNode.value < currentNode.value) {
-        parentNode.right = currentNode;
+      if (parentNode.getValue() > currentNode.getValue()) {
+        parentNode.setLeft(currentNode);
+      } else if (parentNode.getValue() < currentNode.getValue()) {
+        parentNode.setRight(currentNode);
       }
       return;
     }
-    if (currentNode.value > point.value) {
-      insert(currentNode, currentNode.left, point);
+    if (currentNode.getValue() > point.getValue()) {
+      insert(currentNode, currentNode.getLeft(), point);
       return;
     }
-    if (currentNode.value < point.value) {
-      insert(currentNode, currentNode.right, point);
+    if (currentNode.getValue() < point.getValue()) {
+      insert(currentNode, currentNode.getRight(), point);
       return;
     }
   }
@@ -60,22 +61,26 @@ public class BinarySearchTree {
    * 
    * @param n node to be inserted
    */
-  void insert(BinaryNode n) {
-    BinaryNode currentNode = root;
-    BinaryNode parentNode = null;
+  void insert(IBinaryNode n) {
+    IBinaryNode currentNode = root;
+    IBinaryNode parentNode = null;
     while (true) {
       if (currentNode == null) {
         currentNode = n;
-        if (parentNode.value > currentNode.value) {
-          parentNode.left = currentNode;
-        } else if (parentNode.value < currentNode.value) {
-          parentNode.right = currentNode;
+        if (parentNode == null) {
+          root = n;
+          return;
+        }
+        if (parentNode.getValue() > currentNode.getValue()) {
+          parentNode.setLeft(currentNode);
+        } else if (parentNode.getValue() < currentNode.getValue()) {
+          parentNode.setRight(currentNode);
         }
         return;
       }
-      if (currentNode.value != n.value) {
+      if (currentNode.getValue() != n.getValue()) {
         parentNode = currentNode;
-        currentNode = currentNode.value > n.value ? currentNode.left : currentNode.right;
+        currentNode = currentNode.getValue() > n.getValue() ? currentNode.getLeft() : currentNode.getRight();
         continue;
       }
     }
@@ -88,7 +93,7 @@ public class BinarySearchTree {
    * @param m mode of search recursive or loop
    * @return true if the node is found else false
    */
-  public boolean search(BinaryNode n, Mode m) {
+  public boolean search(IBinaryNode n, Mode m) {
     if (m == Mode.RECURSIVE) {
       return search(this.root, n);
     }
@@ -102,18 +107,18 @@ public class BinarySearchTree {
    * @param n           node to be searched
    * @return true if the node is existing in the sub tree from this node
    */
-  boolean search(BinaryNode currentNode, BinaryNode n) {
+  boolean search(IBinaryNode currentNode, IBinaryNode n) {
     if (currentNode == null) {
       return false;
     }
-    if (currentNode.value == n.value) {
+    if (currentNode.getValue() == n.getValue()) {
       return true;
     }
-    if (currentNode.value > n.value) {
-      return search(currentNode.left, n);
+    if (currentNode.getValue() > n.getValue()) {
+      return search(currentNode.getLeft(), n);
     }
-    if (currentNode.value < n.value) {
-      return search(currentNode.right, n);
+    if (currentNode.getValue() < n.getValue()) {
+      return search(currentNode.getRight(), n);
     }
     return false;
   }
@@ -124,16 +129,16 @@ public class BinarySearchTree {
    * @param n node to be found
    * @return true if the node is existing in the BST
    */
-  boolean search(BinaryNode n) {
-    BinaryNode currentNode = root;
+  boolean search(IBinaryNode n) {
+    IBinaryNode currentNode = root;
     while (true) {
       if (currentNode == null) {
         return false;
       }
-      if (currentNode.value == n.value) {
+      if (currentNode.getValue() == n.getValue()) {
         return true;
       }
-      currentNode = currentNode.value > n.value ? currentNode.left : currentNode.right;
+      currentNode = currentNode.getValue() > n.getValue() ? currentNode.getLeft() : currentNode.getRight();
     }
   }
 
