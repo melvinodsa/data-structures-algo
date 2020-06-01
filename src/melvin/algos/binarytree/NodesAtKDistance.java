@@ -1,5 +1,7 @@
 package melvin.algos.binarytree;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 import melvin.datastructures.binarynode.Child;
@@ -12,14 +14,20 @@ public class NodesAtKDistance {
         bt.insert(bt.root, new Node(20), Child.LEFT);
         bt.insert(bt.root, new Node(21), Child.RIGHT);
         bt.insert(bt.root.left, new Node(25), Child.RIGHT);
+        bt.insert(bt.root.left, new Node(34), Child.LEFT);
         bt.insert(bt.root.right, new Node(27), Child.RIGHT);
         bt.insert(bt.root.right.right, new Node(31), Child.RIGHT);
         Node n = bt.search(new Node(31));
+        bt.findDistanceToRoot(n);
+        int k = 5;
+        List<Node> nodes = bt.findNodesAtDistance(k);
+        System.out.println("nodes at distance " + k + " " + nodes);
     }
 }
 
 class BinaryTree {
     Node root;
+    int distance;
 
     boolean insert(Node parent, Node n, Child c) {
         return insert(parent, root, n, c);
@@ -124,6 +132,55 @@ class BinaryTree {
             nodeStack.pop();
         }
     }
+
+    int findDistanceToRoot(Node n) {
+        int distance = 0;
+        Node currentNode = root;
+
+        while (currentNode.value != n.value) {
+            distance++;
+            if (currentNode.left != null && currentNode.left.visited) {
+                currentNode = currentNode.left;
+                continue;
+            }
+            if (currentNode.right != null && currentNode.right.visited) {
+                currentNode = currentNode.right;
+                continue;
+            }
+            return 0;
+        }
+        this.distance = distance;
+        return distance;
+    }
+
+    List<Node> findNodesAtDistance(int k) {
+        return findNodesAtDistance(root, this.distance, k);
+    }
+
+    List<Node> findNodesAtDistance(Node n, int distance, int k) {
+        List<Node> nodes = new LinkedList<>();
+
+        if (n == null) {
+            return nodes;
+        }
+        if (distance > k && !n.visited) {
+            return nodes;
+        }
+
+        if (distance <= k && distance > 0) {
+            nodes.add(n);
+        }
+
+        if (n.left != null) {
+            nodes.addAll(findNodesAtDistance(n.left, n.left.visited ? distance - 1 : distance + 1, k));
+        }
+
+        if (n.right != null) {
+            nodes.addAll(findNodesAtDistance(n.right, n.right.visited ? distance - 1 : distance + 1, k));
+        }
+
+        return nodes;
+    }
 }
 
 class Node {
@@ -134,5 +191,9 @@ class Node {
 
     public Node(int value) {
         this.value = value;
+    }
+
+    public String toString() {
+        return this.value + "";
     }
 }
